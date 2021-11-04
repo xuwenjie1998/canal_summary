@@ -1,0 +1,21 @@
+canal:
+  client:
+    instances:
+      example:
+        host: 192.168.3.122
+        port: 11111
+        userName: canal
+        password: canal
+        filter: csbr_sales_perform_data.tr_sales_flow,csbr_purchase_data.tr_order,csbr_purchase_data.tr_prescription_order,csbr_sales_perform_data.tr_customer_clock_in,csbr_sales_perform_data.tr_customer_support_price,csbr_sales_perform_data.tr_marketing_visit
+
+#mysql
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://218.106.118.42:13001/csbr_bi_data?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: root
+
+#mybatis config
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

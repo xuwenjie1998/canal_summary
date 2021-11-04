@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csbr.xu.canal.mapper.DwsMapper">
+
+    <insert id="insertOrder" parameterType = "map">
+        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)
+            values (#{table_name},cast(#{input_time} as date),#{account_month},'N',now())
+    </insert>
+
+    <select id="selectOrder" parameterType="map" resultType="map">
+    select date_format(input_time,'%Y-%m-%d') as input_time,
+           account_month
+    from csbr_purchase_data.tr_order
+    where GUID = #{GUID}
+    </select>
+
+    <insert id="insertPreOrder" parameterType = "map">
+        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)
+            values (#{table_name},cast(#{input_time} as date),#{account_month},'N',now())
+    </insert>
+
+    <select id="selectPreOrder" parameterType="map" resultType="map">
+    select date_format(input_time,'%Y-%m-%d') as input_time,
+           account_month
+    from csbr_purchase_data.tr_prescription_order
+    where guid = #{guid}
+    </select>
+
+    <insert id="insertFlow" parameterType = "map">
+        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)
+            values (#{table_name},cast(#{sales_date} as date),#{account_month},'N',now())
+    </insert>
+
+    <select id="selectFlow" parameterType="map" resultType="map">
+    select date_format(sales_date,'%Y-%m-%d') as sales_date,
+           account_month
+    from csbr_sales_perform_data.tr_sales_flow
+    where guid = #{guid}
+    </select>
+
+    <insert id="insertClock" parameterType = "map">
+        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)
+            values (#{table_name},cast(#{enter_time} as date),#{account_month},'N',now())
+    </insert>
+
+    <select id="selectClock" parameterType="map" resultType="map">
+    select date_format(enter_time,'%Y-%m-%d') as enter_time,
+           account_month
+    from csbr_sales_perform_data.tr_customer_clock_in
+    where guid = #{guid}
+    </select>
+
+    <insert id="insertSupport" parameterType = "map">
+        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)
+            values (#{table_name},cast(#{arrival_time} as date),#{account_month},'N',now())
+    </insert>
+
+    <select id="selectSupport" parameterType="map" resultType="map">
+    select date_format(arrival_time,'%Y-%m-%d') as arrival_time,
+           account_month
+    from csbr_sales_perform_data.tr_customer_support_price
+    where guid = #{guid}
+    </select>
+
+    <insert id="insertVisit" parameterType = "map">
+        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)
+            values (#{table_name},cast(#{visit_time} as date),#{account_month},'N',now())
+    </insert>
+
+    <select id="selectVisit" parameterType="map" resultType="map">
+    select date_format(visit_time,'%Y-%m-%d') as visit_time,
+           account_month
+    from csbr_sales_perform_data.tr_marketing_visit
+    where guid = #{guid}
+    </select>
+
+
+
+
+
+<!--    <insert id="insertOne" parameterType="map">-->
+<!--        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)-->
+<!--        <if test="_parameter.containsKey('sales_date') and sales_date != ''">-->
+<!--            values (#{table_name},cast(#{sales_date} as date),#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('sales_date') and sales_date == ''">-->
+<!--            values (#{table_name},null,#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('input_time') and input_time != ''">-->
+<!--            values (#{table_name},cast(#{input_time} as date),#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('input_time') and input_time == ''">-->
+<!--            values (#{table_name},null,#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('enter_time') and enter_time != ''">-->
+<!--            values (#{table_name},cast(#{enter_time} as date),#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('enter_time') and enter_time == ''">-->
+<!--            values (#{table_name},null,#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('arrival_time') and arrival_time != ''">-->
+<!--            values (#{table_name},cast(#{arrival_time} as date),#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('arrival_time') and arrival_time == ''">-->
+<!--            values (#{table_name},null,#{account_month},'N',now())-->
+<!--        </if>-->
+<!--    </insert>-->
+
+<!--    <insert id="insertOrder" parameterType="map">-->
+<!--        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)-->
+<!--        <if test="_parameter.containsKey('input_time') and input_time != ''">-->
+<!--            values (#{table_name},cast(#{input_time} as date),#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="_parameter.containsKey('input_time') and input_time == ''">-->
+<!--            values (#{table_name},null,#{account_month},'N',now())-->
+<!--        </if>-->
+<!--    </insert>-->
+
+<!--    <insert id="insertOneVisit" parameterType="map">-->
+<!--        insert into csbr_bi_data.dws_summary_tmp (table_name, calendar_month, account_month, is_delete, create_time)-->
+<!--        <if test="visit_time != ''">-->
+<!--            values (#{table_name},cast(#{visit_time} as date),#{account_month},'N',now())-->
+<!--        </if>-->
+<!--        <if test="visit_time == ''">-->
+<!--            values (#{table_name},null,#{account_month},'N',now())-->
+<!--        </if>-->
+<!--    </insert>-->
+
+<!--    <select id="selectOne" parameterType="map" resultType="map" statementType="STATEMENT">-->
+<!--        select-->
+<!--        <if test="table_name == 'csbr_sales_perform_data.tr_sales_flow'">-->
+<!--            date_format(sales_date,'%Y-%m-%d') as sales_date,-->
+<!--        </if>-->
+<!--        <if test="table_name == 'csbr_purchase_data.tr_order'">-->
+<!--            date_format(input_time,'%Y-%m-%d') as input_time,-->
+<!--        </if>-->
+<!--        <if test="table_name == 'csbr_purchase_data.tr_prescription_order'">-->
+<!--            date_format(input_time,'%Y-%m-%d') as input_time,-->
+<!--        </if>-->
+<!--        <if test="table_name == 'csbr_sales_perform_data.tr_customer_clock_in'">-->
+<!--            date_format(enter_time,'%Y-%m-%d') as enter_time,-->
+<!--        </if>-->
+<!--        <if test="table_name == 'csbr_sales_perform_data.tr_customer_support_price'">-->
+<!--            date_format(arrival_time,'%Y-%m-%d') as arrival_time,-->
+<!--        </if>-->
+<!--        <if test="table_name == 'csbr_sales_perform_data.tr_marketing_visit'">-->
+<!--            date_format(visit_time,'%Y-%m-%d') as visit_time,-->
+<!--        </if>-->
+<!--        account_month-->
+<!--        from ${table_name}-->
+<!--        <if test="table_name == 'csbr_purchase_data.tr_order'">-->
+<!--            where guid = '${GUID}'-->
+<!--        </if>-->
+<!--        <if test="table_name != 'csbr_purchase_data.tr_order'">-->
+<!--            where guid = '${guid}'-->
+<!--        </if>-->
+<!--    </select>-->
+
+</mapper>
