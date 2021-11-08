@@ -13,12 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * @program: canal_summary
- * @description: tr_sales_flow
- * @author: ASUS
+ * @description: 监听tr_sales_flow表增删改
+ * @author: xwj
  * @create: 2021-11-04 13:55
  **/
 @CanalEventListener
@@ -31,29 +32,50 @@ public class FlowListener {
     @Autowired
     private EventData eventData;
 
+    /***
+     * 监听插入操作
+     * @author: xwj
+     * @create: 2021/11/8 11:03
+     * @param: [canalMsg, rowChange]
+     * @return: void
+     **/
     @InsertListenPoint(destination = "example", schema = "csbr_sales_perform_data", table = "tr_sales_flow")
     public void onEventInsertData(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception {
-        Map<String, String> flowMap = eventData.insertDate(canalMsg, rowChange);
-        if (CollectionUtils.isEmpty(flowMap)) {
+        List<Map<String, String>> flowList = eventData.insertDate(canalMsg, rowChange);
+        if (CollectionUtils.isEmpty(flowList)) {
             return;
         }
-        dwsService.insertFlow(flowMap);
+        dwsService.insertFlow(flowList);
         log.info("====================== INSERT END =============================");
     }
 
+    /***
+     * 监听删除操作
+     * @author: xwj
+     * @create: 2021/11/8 11:03
+     * @param: [rowChange, canalMsg]
+     * @return: void
+     **/
     @DeleteListenPoint(destination = "example", schema = "csbr_sales_perform_data", table = "tr_sales_flow")
     public void onEventDeleteData(CanalEntry.RowChange rowChange, CanalMsg canalMsg) throws Exception {
-        Map<String, String> deleteMap = eventData.deleteData(rowChange, canalMsg);
-        if (CollectionUtils.isEmpty(deleteMap)) {
+        List<Map<String, String>> deleteList = eventData.deleteData(rowChange, canalMsg);
+        if (CollectionUtils.isEmpty(deleteList)) {
             return;
         }
-        dwsService.insertFlow(deleteMap);
+        dwsService.insertFlow(deleteList);
         log.info("===================== DELETE END =================================");
     }
 
+    /***
+     * 监听更新操作
+     * @author: xwj
+     * @create: 2021/11/8 11:04
+     * @param: [canalMsg, rowChange]
+     * @return: void
+     **/
     @UpdateListenPoint(destination = "example", schema = "csbr_sales_perform_data", table = "tr_sales_flow")
     public void onEventUpdateData(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception {
-        Map<String, Map<String, String>> deleteAfterMap = eventData.updateData(canalMsg, rowChange);
+        List<Map<String, Map<String, String>>> deleteAfterMap = eventData.updateData(canalMsg, rowChange);
 
         dwsService.updateFlow(deleteAfterMap);
 

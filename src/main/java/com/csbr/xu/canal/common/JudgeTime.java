@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class JudgeTime {
-    //判断核算月
+
     public Boolean JudgeTime(Map<String, String> map) {
         Date dNow = new Date(); //当前时间
         Date dBefore = new Date();

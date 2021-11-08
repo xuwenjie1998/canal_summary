@@ -13,12 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * @program: canal_summary
- * @description: csbr_sales_perform_data.tr_customer_clock_in
- * @author: ASUS
+ * @description: 监听csbr_sales_perform_data.tr_customer_clock_in表增删改
+ * @author: xwj
  * @create: 2021-11-04 14:14
  **/
 @CanalEventListener
@@ -31,29 +32,50 @@ public class ClockListener {
     @Autowired
     private EventData eventData;
 
+    /***
+     * 监听插入操作
+     * @author: xwj
+     * @create: 2021/11/8 11:00
+     * @param: [canalMsg, rowChange]
+     * @return: void
+     **/
     @InsertListenPoint(destination = "example", schema = "csbr_sales_perform_data", table = "tr_customer_clock_in")
     public void onEventInsertData(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception {
-        Map<String, String> clockMap = eventData.insertDate(canalMsg, rowChange);
-        if (CollectionUtils.isEmpty(clockMap)) {
+        List<Map<String, String>> clockList = eventData.insertDate(canalMsg, rowChange);
+        if (CollectionUtils.isEmpty(clockList)) {
             return;
         }
-        dwsService.insertClock(clockMap);
+        dwsService.insertClock(clockList);
         log.info("====================== INSERT END =============================");
     }
 
+    /***
+     * 监听删除操作
+     * @author: xwj
+     * @create: 2021/11/8 11:03
+     * @param: [rowChange, canalMsg]
+     * @return: void
+     **/
     @DeleteListenPoint(destination = "example", schema = "csbr_sales_perform_data", table = "tr_customer_clock_in")
     public void onEventDeleteData(CanalEntry.RowChange rowChange, CanalMsg canalMsg) throws Exception {
-        Map<String, String> deleteMap = eventData.deleteData(rowChange, canalMsg);
-        if (CollectionUtils.isEmpty(deleteMap)) {
+        List<Map<String, String>> deleteList = eventData.deleteData(rowChange, canalMsg);
+        if (CollectionUtils.isEmpty(deleteList)) {
             return;
         }
-        dwsService.insertClock(deleteMap);
+        dwsService.insertClock(deleteList);
         log.info("===================== DELETE END =================================");
     }
 
+    /***
+     * 监听更新操作
+     * @author: xwj
+     * @create: 2021/11/8 11:03
+     * @param: [canalMsg, rowChange]
+     * @return: void
+     **/
     @UpdateListenPoint(destination = "example", schema = "csbr_sales_perform_data", table = "tr_customer_clock_in")
     public void onEventUpdateData(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception {
-        Map<String, Map<String, String>> deleteAfterMap = eventData.updateData(canalMsg, rowChange);
+        List<Map<String, Map<String, String>>> deleteAfterMap = eventData.updateData(canalMsg, rowChange);
 
         dwsService.updateClock(deleteAfterMap);
 

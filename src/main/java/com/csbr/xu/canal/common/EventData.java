@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @program: canal_summary
  * @description: 抽取监听器增删改的监听代码
- * @author: ASUS
+ * @author: xwj
  * @create: 2021-11-04 09:23
  **/
 @Slf4j
@@ -29,11 +29,12 @@ public class EventData {
     @Autowired
     private JudgeTime judgeTime;
 
-    public Map<String, String> insertDate(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception{
+    public List<Map<String, String>> insertDate(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception{
         log.info("====================== INSERT START ==========================");
 
         List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
 
+        List<Map<String,String>> listMap = new ArrayList<>();
         for (CanalEntry.RowData rowData : rowDatasList) {
             String sql = "use " + canalMsg.getSchemaName() + ";\n";
             StringBuffer colums = new StringBuffer();
@@ -51,18 +52,21 @@ public class EventData {
             Map<String, String> afterMap = printColumns.printColumnsInsert(rowData.getAfterColumnsList(), schemaTableName);
             if (CollectionUtils.isEmpty(afterMap)){
                 log.warn("afterMap为空");
-                return null;
+                continue;
             }else if(judgeTime.JudgeTime(afterMap)) {
-                return null;
+                continue;
             }
-            return afterMap;
+            listMap.add(afterMap);
         }
-        return null;
+        return listMap;
     }
 
-    public Map<String,String> deleteData(CanalEntry.RowChange rowChange, CanalMsg canalMsg) throws Exception{
+    public List<Map<String, String>> deleteData(CanalEntry.RowChange rowChange, CanalMsg canalMsg) throws Exception{
         log.info("====================== DELETE START ==========================");
         List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
+
+        List<Map<String,String>> listMap = new ArrayList<>();
+
         for (CanalEntry.RowData rowData : rowDatasList) {
 
             if (!CollectionUtils.isEmpty(rowData.getBeforeColumnsList())) {
@@ -87,19 +91,22 @@ public class EventData {
                 Map<String, String> deleteMap = printColumns.printColumnsDelete(rowData.getBeforeColumnsList(), schemaTableName);
                 if (CollectionUtils.isEmpty(deleteMap) || StringUtils.isBlank(deleteMap.get("account_month")) || deleteMap.get("account_month").length() != 6) {
                     log.error("deleteMap为空或核算月格式错误！");
-                    return null;
+                    continue;
                 } else if (judgeTime.JudgeTime(deleteMap)) {
-                    return null;
+                    continue;
                 }
-                return deleteMap;
+                listMap.add(deleteMap);
             }
         }
-        return null;
+        return listMap;
     }
 
-    public Map<String, Map<String, String>> updateData(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception{
+    public List<Map<String, Map<String, String>>> updateData(CanalMsg canalMsg, CanalEntry.RowChange rowChange) throws Exception{
         log.info("====================== UPDATE START ==========================");
         List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
+
+        List<Map<String, Map<String, String>>> lists = new ArrayList<>();
+
         for (CanalEntry.RowData rowData : rowDatasList) {
 
             String sql = "use " + canalMsg.getSchemaName() + ";\n";
@@ -143,8 +150,8 @@ public class EventData {
             beforeAndAfterMap.put("beforeMap",mapBefore);
             beforeAndAfterMap.put("afterMap",mapAfter);
 
-            return beforeAndAfterMap;
+            lists.add(beforeAndAfterMap);
         }
-        return null;
+        return lists;
     }
 }
