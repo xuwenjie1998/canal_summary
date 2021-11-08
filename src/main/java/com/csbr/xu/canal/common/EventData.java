@@ -53,7 +53,7 @@ public class EventData {
             if (CollectionUtils.isEmpty(afterMap)){
                 log.warn("afterMap为空");
                 continue;
-            }else if(judgeTime.JudgeTime(afterMap)) {
+            }else if(!judgeTime.JudgeTime(afterMap)) {
                 continue;
             }
             listMap.add(afterMap);
@@ -92,7 +92,7 @@ public class EventData {
                 if (CollectionUtils.isEmpty(deleteMap) || StringUtils.isBlank(deleteMap.get("account_month")) || deleteMap.get("account_month").length() != 6) {
                     log.error("deleteMap为空或核算月格式错误！");
                     continue;
-                } else if (judgeTime.JudgeTime(deleteMap)) {
+                } else if (!judgeTime.JudgeTime(deleteMap)) {
                     continue;
                 }
                 listMap.add(deleteMap);
